@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+    // Datos de entrenamiento (X) y etiquetas (y)
+    const X = [[0, 0], [0, 1], [1, 0], [1, 1]];
+    const y = [0, 0, 0, 1];
+
+    // Inicialización de pesos y bias
+    let w = [Math.random(), Math.random()];
+    let b = Math.random(); //bias (b) o sesgo equivale a w3
+    const eta = 0.1; // Tasa de aprendizaje
+
+    // Función de propagación hacia adelante
+    const forward = (x) => {
+    const sum = w[0] * x[0] + w[1] * x[1] + b;
+    return sum > 0 ? 1 : 0;
+    };
+
+    // Entrenamiento
+    for (let epoch = 0; epoch < 100; epoch++) { // Número de iteraciones
+    for (let i = 0; i < X.length; i++) {
+        const y_pred = forward(X[i]);
+        const e = y[i] - y_pred;
+        w[0] = w[0] + eta * e * X[i][0];
+        w[1] = w[1] + eta * e * X[i][1];
+        b = b + eta * e;
+    }
+    }
+
+    console.log("Pesos ajustados:", w);
+    console.log("Bias ajustado:", b);
+
+</script>
+</html>
