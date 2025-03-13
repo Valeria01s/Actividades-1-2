@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Perceptrón con 40 puntos separables</title>
+    <style>
+        body { text-align: center; }
+        canvas { border: 1px solid grey; background: #000000; display: inline-block; }
+        .boton {
+            padding: 5px;
+            font-size: 15px;
+            color: #fff;
+            background-color: #ff0000;
+            border-radius: 6px;
+            border: 2px solid #0016b0;
+            margin-left: 10px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="color: black;">Punto 3: Datos adicionales</h2>
+    <div class="container">
+        <h2 style="color: black;">Perceptrón con 40 puntos separables</h2>
+        <canvas id="canvas" width="400" height="300"></canvas>
+        <button id="train" class="boton">Entrenar</button>
+    </div>
+    <p id="output" style="color: white;"></p>
+    
+    <script>
+        let canvas = document.getElementById("canvas");
+        let ctx = canvas.getContext("2d");
+        let points = [];
+        let weights = [Math.random(), Math.random(), Math.random()];
+        
+        function generatePoints() {
+            points = [];
+            for (let i = 0; i < 20; i++) {
+                points.push({ x: Math.random() * -2, y: Math.random() * -2, class: -1 });
+                points.push({ x: Math.random() * 2, y: Math.random() * 2, class: 1 });
+            }
+            drawPoints();
+        }
+
+        function drawPoints() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            points.forEach(p => {
+                ctx.fillStyle = p.class === 1 ? "blue" : "red";
+                ctx.beginPath();
+                ctx.arc(p.x * 50 + 200, -p.y * 50 + 150, 5, 0, 2 * Math.PI);
+                ctx.fill();
+            });
+        }
+
+        function train() {
+            let trained = false;
+            while (!trained) {
+                trained = true;
+                points.forEach(p => {
+                    let sum = weights[0] * p.x + weights[1] * p.y + weights[2];
+                    let prediction = sum >= 0 ? 1 : -1;
+                    if (prediction !== p.class) {
+                        weights[0] += 0.1 * (p.class - prediction) * p.x;
+                        weights[1] += 0.1 * (p.class - prediction) * p.y;
+                        weights[2] += 0.1 * (p.class - prediction);
+                        trained = false;
+                    }
+                });
+            }
+            drawLine();
+            document.getElementById("output").innerText = `Pesos: ${weights.map(w => w.toFixed(2)).join(", ")}`;
+        }
+
+        function drawLine() {
+            ctx.beginPath();
+            let x1 = -4, x2 = 4;
+            let y1 = (-weights[0] * x1 - weights[2]) / weights[1];
+            let y2 = (-weights[0] * x2 - weights[2]) / weights[1];
+            ctx.moveTo(x1 * 50 + 200, -y1 * 50 + 150);
+            ctx.lineTo(x2 * 50 + 200, -y2 * 50 + 150);
+            ctx.strokeStyle = "red";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        document.getElementById("train").addEventListener("click", train);
+        generatePoints();
+    </script>
+</body>
+</html>
